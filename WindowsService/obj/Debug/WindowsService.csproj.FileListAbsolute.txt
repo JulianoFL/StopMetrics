@@ -1,0 +1,8 @@
+E:\Projetos\StopMetrics\WindowsService\bin\Debug\WindowsService.exe.config
+E:\Projetos\StopMetrics\WindowsService\bin\Debug\WindowsService.exe
+E:\Projetos\StopMetrics\WindowsService\bin\Debug\WindowsService.pdb
+E:\Projetos\StopMetrics\WindowsService\obj\Debug\WindowsService.csproj.AssemblyReference.cache
+E:\Projetos\StopMetrics\WindowsService\obj\Debug\WindowsService.csproj.SuggestedBindingRedirects.cache
+E:\Projetos\StopMetrics\WindowsService\obj\Debug\WindowsService.csproj.CoreCompileInputs.cache
+E:\Projetos\StopMetrics\WindowsService\obj\Debug\WindowsService.exe
+E:\Projetos\StopMetrics\WindowsService\obj\Debug\WindowsService.pdb

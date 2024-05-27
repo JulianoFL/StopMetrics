@@ -1,0 +1,124 @@
+Sending build context to Docker daemon  28.74MB
+Step 1/21 : FROM mcr.microsoft.com/dotnet/core/aspnet:3.0-buster-slim AS base
+ ---> f66ae0e6ad48
+Step 2/21 : WORKDIR /app
+ ---> Using cache
+ ---> 658499b979fe
+Step 3/21 : EXPOSE 80
+ ---> Using cache
+ ---> f816643856b3
+Step 4/21 : EXPOSE 443
+ ---> Using cache
+ ---> 769a69d12f31
+Step 5/21 : FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
+ ---> 9c31f62cdc54
+Step 6/21 : WORKDIR /src
+ ---> Using cache
+ ---> 2d2d3ac41449
+Step 7/21 : COPY ["StopMetrics/StopMetrics.csproj", "StopMetrics/"]
+ ---> d66e3f3801c0
+Step 8/21 : RUN dotnet restore "StopMetrics/StopMetrics.csproj"
+ ---> Running in bc9b48dcfc03
+  Restore completed in 4.15 min for /src/StopMetrics/StopMetrics.csproj.
+Removing intermediate container bc9b48dcfc03
+ ---> 148cf184ce6c
+Step 9/21 : RUN curl -sL https://deb.nodesource.com/setup_10.x |  bash -
+ ---> Running in be35d6811098
+
+## Installing the NodeSource Node.js 10.x repo...
+
+
+## Populating apt-get cache...
+
++ apt-get update
+Get:1 http://security.debian.org/debian-security buster/updates InRelease [65.4 kB]
+Get:2 http://deb.debian.org/debian buster InRelease [122 kB]
+Get:3 http://security.debian.org/debian-security buster/updates/main amd64 Packages [158 kB]
+Get:4 http://deb.debian.org/debian buster-updates InRelease [49.3 kB]
+Get:5 http://deb.debian.org/debian buster/main amd64 Packages [7908 kB]
+Get:6 http://deb.debian.org/debian buster-updates/main amd64 Packages [5792 B]
+Fetched 8308 kB in 19s (427 kB/s)
+Reading package lists...
+
+## Installing packages required for setup: lsb-release...
+
++ apt-get install -y lsb-release > /dev/null 2>&1
+
+## Confirming "buster" is supported...
+
++ curl -sLf -o /dev/null 'https://deb.nodesource.com/node_10.x/dists/buster/Release'
+
+## Adding the NodeSource signing key to your keyring...
+
++ curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
+[91mWarning: apt-key output should not be parsed (stdout is not a terminal)
+[0mOK
+
+## Creating apt sources list file for the NodeSource Node.js 10.x repo...
+
++ echo 'deb https://deb.nodesource.com/node_10.x buster main' > /etc/apt/sources.list.d/nodesource.list
++ echo 'deb-src https://deb.nodesource.com/node_10.x buster main' >> /etc/apt/sources.list.d/nodesource.list
+
+## Running `apt-get update` for you...
+
++ apt-get update
+Hit:1 http://security.debian.org/debian-security buster/updates InRelease
+Get:2 https://deb.nodesource.com/node_10.x buster InRelease [4584 B]
+Get:3 https://deb.nodesource.com/node_10.x buster/main amd64 Packages [768 B]
+Hit:4 http://deb.debian.org/debian buster InRelease
+Hit:5 http://deb.debian.org/debian buster-updates InRelease
+Fetched 5352 B in 1s (3576 B/s)
+Reading package lists...
+
+## Run `sudo apt-get install -y nodejs` to install Node.js 10.x and npm
+## You may also need development tools to build native addons:
+     sudo apt-get install gcc g++ make
+## To install the Yarn package manager, run:
+     curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+     echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+     sudo apt-get update && sudo apt-get install yarn
+
+
+Removing intermediate container be35d6811098
+ ---> 01627bc2aade
+Step 10/21 : RUN apt-get install -y nodejs
+ ---> Running in 33f20b476225
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following NEW packages will be installed:
+  nodejs
+0 upgraded, 1 newly installed, 0 to remove and 12 not upgraded.
+Need to get 15.8 MB of archives.
+After this operation, 76.3 MB of additional disk space will be used.
+Get:1 https://deb.nodesource.com/node_10.x buster/main amd64 nodejs amd64 10.17.0-1nodesource1 [15.8 MB]
+[91mdebconf: delaying package configuration, since apt-utils is not installed
+[0mFetched 15.8 MB in 35s (455 kB/s)
+Selecting previously unselected package nodejs.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 12905 files and directories currently installed.)
+Preparing to unpack .../nodejs_10.17.0-1nodesource1_amd64.deb ...
+Unpacking nodejs (10.17.0-1nodesource1) ...
+Setting up nodejs (10.17.0-1nodesource1) ...
+Removing intermediate container 33f20b476225
+ ---> 383b8ccf5845
+Step 11/21 : COPY . .
+ ---> bfce51612237
+Step 12/21 : WORKDIR "/src/StopMetrics"
+ ---> Running in 353dc7c469df
+Removing intermediate container 353dc7c469df
+ ---> 28d45ebadb53
+Step 13/21 : RUN dotnet build "StopMetrics.csproj" -c Debug -o /app/build
+ ---> Running in 741a21de2f0e
+Microsoft (R) Build Engine version 16.3.2+e481bbf88 for .NET Core
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+  Restore completed in 23.14 ms for /src/StopMetrics/StopMetrics.csproj.
+Controllers/TradesController.cs(469,50): warning CS0168: The variable 'e' is declared but never used [/src/StopMetrics/StopMetrics.csproj]
+Controllers/AuthenticationController.cs(61,41): warning CS0168: The variable 'E' is declared but never used [/src/StopMetrics/StopMetrics.csproj]
+Controllers/QuotesController.cs(162,30): warning CS0168: The variable 'E' is declared but never used [/src/StopMetrics/StopMetrics.csproj]
+  StopMetrics -> /app/build/StopMetrics.dll
+  StopMetrics -> /app/build/StopMetrics.Views.dll
+  v10.17.0
+  Restoring dependencies using 'npm'. This may take several minutes...
+  npm WARN tarball tarball data for @angular/core@8.0.0 (sha512-mrkP1PTzqCmZGLYll+TDyawLXHzi+FcRPqSuRxCmDMthUUE93SLXT2yISDkx9aMPtFKgFr6KfrIkKuCz16BP/g==) seems to be corrupted. Trying one more time.
+  npm WARN tarball tarball data for typescript@3.4.5 (sha512-YycBxUb49UUhdNMU5aJ7z5Ej2XGmaIBL0x34vZ82fn3hGvD+bgrMrVDpatgz2f7YxUMJxMkbWxJZeAvDxVe7Vw==) seems to be corrupted. Trying one more time.
