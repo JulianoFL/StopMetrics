@@ -1,0 +1,156 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+		<TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+		<IsPackable>false</IsPackable>
+		<SpaRoot>ClientApp\</SpaRoot>
+		<DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
+
+		<!-- Set this to true if you enable server-side prerendering -->
+		<BuildServerSideRenderer>false</BuildServerSideRenderer>
+		<AssemblyName>StopMetrics</AssemblyName>
+		<UserSecretsId>08eeb9b9-90a8-4c84-bbbc-abb45b80c114</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<Configurations>Debug;Release;DebugPublish</Configurations>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="FirebaseAdmin" Version="2.3.0" />
+		<PackageReference Include="FluentDateTime" Version="2.1.0" />
+		<PackageReference Include="Google.Apis.Auth.AspNetCore3" Version="1.61.0" />
+		<PackageReference Include="Google.Apis.Auth.Mvc" Version="1.61.0" />
+		<PackageReference Include="Google.Apis.Drive.v3" Version="1.61.0.3082" />
+		<PackageReference Include="Google.Apis.YouTube.v3" Version="1.60.0.3064" />
+		<PackageReference Include="Microsoft.AspNet.SignalR.Core" Version="2.4.3" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="7.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.Hosting.WindowsServices" Version="7.0.12" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="7.0.3" />
+		<PackageReference Include="Microsoft.Data.Sqlite.Core" Version="7.0.3" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.3" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.3">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.3" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.3" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.3">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="7.0.3" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="7.0.0" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+		<PackageReference Include="NLog.Web.AspNetCore" Version="5.3.5" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.27.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Don't publish the SPA source files, but do show them in the project files list -->
+		<Content Remove="$(SpaRoot)**" />
+		<None Remove="$(SpaRoot)**" />
+		<None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<Compile Remove="Migrations\20200426160901_MasterSymbol.cs" />
+		<Compile Remove="Migrations\20200426160901_MasterSymbol.Designer.cs" />
+		<Compile Remove="Migrations\20200426164336_strategies.cs" />
+		<Compile Remove="Migrations\20200426164336_strategies.Designer.cs" />
+		<Compile Remove="Migrations\20200430192219_trade_strategy.cs" />
+		<Compile Remove="Migrations\20200430192219_trade_strategy.Designer.cs" />
+		<Compile Remove="Migrations\20200430192954_trade_strategy.cs" />
+		<Compile Remove="Migrations\20200430192954_trade_strategy.Designer.cs" />
+		<Compile Remove="Migrations\20200430193056_trade_strategy.cs" />
+		<Compile Remove="Migrations\20200430193056_trade_strategy.Designer.cs" />
+		<Compile Remove="Migrations\20200506160408_cascadeTStrategies.cs" />
+		<Compile Remove="Migrations\20200506160408_cascadeTStrategies.Designer.cs" />
+		<Compile Remove="Migrations\20200506162220_cascadeTStrategies.cs" />
+		<Compile Remove="Migrations\20200506162220_cascadeTStrategies.Designer.cs" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<Content Include="StopMetricsLite.sqlite">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="firebase_admin.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</EmbeddedResource>
+	</ItemGroup>
+
+	<Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
+		<!-- Ensure Node.js is installed -->
+		<Exec Command="node --version" ContinueOnError="true">
+			<Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+		</Exec>
+		<Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+		<Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
+		<Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+	</Target>
+
+	<Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
+		<!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
+		<Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+		<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />
+
+		<!-- Include the newly-built files in the publish output -->
+		<ItemGroup>
+			<DistFiles Include="$(SpaRoot)build\**" />
+			<ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+				<RelativePath>wwwroot\%(RecursiveDir)%(FileName)%(Extension)</RelativePath>
+				<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+				<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			</ResolvedFileToPublish>
+		</ItemGroup>
+	</Target>
+
+
+	<PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<TypeScriptTarget>ESNext</TypeScriptTarget>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+		<TypeScriptTarget>ESNext</TypeScriptTarget>
+		<TypeScriptJSXEmit>React</TypeScriptJSXEmit>
+		<TypeScriptModuleKind>ES6</TypeScriptModuleKind>
+		<TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+		<TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
+		<TypeScriptRemoveComments>False</TypeScriptRemoveComments>
+		<TypeScriptOutFile />
+		<TypeScriptOutDir />
+		<TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+		<TypeScriptNoEmitOnError>True</TypeScriptNoEmitOnError>
+		<TypeScriptSourceMap>True</TypeScriptSourceMap>
+		<TypeScriptMapRoot />
+		<TypeScriptSourceRoot />
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)'=='DebugPublish'">
+	  <TypeScriptTarget>ESNext</TypeScriptTarget>
+	  <TypeScriptJSXEmit>React</TypeScriptJSXEmit>
+	  <TypeScriptModuleKind>ES6</TypeScriptModuleKind>
+	  <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+	  <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
+	  <TypeScriptRemoveComments>False</TypeScriptRemoveComments>
+	  <TypeScriptOutFile />
+	  <TypeScriptOutDir />
+	  <TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+	  <TypeScriptNoEmitOnError>True</TypeScriptNoEmitOnError>
+	  <TypeScriptSourceMap>True</TypeScriptSourceMap>
+	  <TypeScriptMapRoot />
+	  <TypeScriptSourceRoot />
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugPublish|AnyCPU'">
+	  <DefineConstants>$(DefineConstants);PUBLISH</DefineConstants>
+	</PropertyGroup>
+
+</Project>
